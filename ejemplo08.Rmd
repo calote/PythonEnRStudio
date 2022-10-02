@@ -1,0 +1,61 @@
+---
+title: "R Markdown con R y python"
+author: "Pedro Luque"
+date: "2022-09-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Ejemplo de documento R Markdown con chunk con código python y otro chunk con código R.
+En este caso no comparten información.
+
+
+
+A continuación se muestra un gráfico de líneas sobre ejes polares.
+
+```{python}
+#| label: fig-polar
+#| fig-cap: "Un gráfico de líneas sobre ejes polares"
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+r = np.arange(0, 2, 0.01)
+theta = 2 * np.pi * r
+fig, ax = plt.subplots(
+  subplot_kw = {'projection': 'polar'} 
+)
+ax.plot(theta, r)
+ax.set_rticks([0.5, 1, 1.5, 2])
+ax.grid(True)
+plt.show()
+```
+
+
+
+## Air Quality
+
+Se explora el impacto de la temperatura en el nivel de ozono.
+
+```{r}
+#| label: fig-airquality
+#| fig-cap: Temperatura y nivel de ozono.
+#| warning: false
+#| fig-width: 8
+#| fig-height: 4
+
+library(ggplot2)
+
+ggplot(airquality, aes(Temp, Ozone)) + 
+  geom_point() + 
+  geom_smooth(method = "loess"
+)
+
+```
+
+
+
+

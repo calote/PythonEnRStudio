@@ -1,0 +1,132 @@
+---
+title: "matplotlib demo"
+format:
+  html:
+    code-fold: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE)
+```
+
+```{r}
+library(reticulate)
+```
+
+For a demonstration of a line plot on a polar axis, see @fig-polar.
+
+```{python}
+#| label: fig-polar
+#| fig-cap: "A line plot on a polar axis"
+#| message: false
+
+import numpy as np
+import matplotlib.pyplot as plt
+# las siguientes dos líneas evitan warnings en la salida quarto
+import warnings
+warnings.filterwarnings('ignore')
+
+r = np.arange(0, 2, 0.01)
+theta = 2 * np.pi * r
+fig, ax = plt.subplots(
+  subplot_kw = {'projection': 'polar'} 
+)
+ax.plot(theta, r)
+ax.set_rticks([0.5, 1, 1.5, 2])
+ax.grid(True)
+plt.show()
+```
+
+
+No están usando objetos compartidos en este ejemplo, pero también se podrían hacer como en el ejemplo con R Markdown.
+
+**Quarto** es muy parecido a R Markdown: [Página oficial de Quarto](https://quarto.org)
+
+## Air Quality
+
+@fig-airquality further explores the impact of temperature on ozone level.
+
+```{r}
+#| label: fig-airquality
+#| fig-cap: Temperature and ozone level.
+#| warning: false
+#| fig-width: 8
+#| fig-height: 4
+
+library(ggplot2)
+
+ggplot(airquality, aes(Temp, Ozone)) + 
+  geom_point() + 
+  geom_smooth(method = "loess"
+)
+```
+
+## Incluye otros lenguajes: observable
+
+**Observable** es una plataforma en línea para escribir y publicar cuadernos **JavaScript**. 
+Observable funcionará con cualquier biblioteca de JavaScript que se ejecute en el navegador.
+
+- Página oficial de Observablehq: <https://observablehq.com/explore>
+- <https://github.com/observablehq>
+- FAQ sobre observable: <https://observablehq.com/@observablehq/observable-faq>
+
+
+A continuación se muestra un sencillo ejemplo basado en el dataset de Allison Horst [Palmer Penguins (pingüinos del archipiélago Palmer en Antártida)](https://allisonhorst.github.io/palmerpenguins/). Se observa cómo la masa corporal del pingüino varía tanto por el sexo como por las especies (use las entradas proporcionadas para filtrar el conjunto de datos por longitud del pico e isla donde se encuentran):
+
+```{ojs}
+//| panel: input
+viewof bill_length_min = Inputs.range(
+  [32, 50], 
+  {value: 35, step: 1, label: "Bill length (min):"}
+)
+viewof islands = Inputs.checkbox(
+  ["Torgersen", "Biscoe", "Dream"], 
+  { value: ["Torgersen", "Biscoe"], 
+    label: "Islands:"
+  }
+)
+```
+
+::: panel-tabset
+## Plot
+
+```{ojs}
+Plot.rectY(filtered, 
+  Plot.binX(
+    {y: "count"}, 
+    {x: "body_mass_g", fill: "species", thresholds: 20}
+  ))
+  .plot({
+    facet: {
+      data: filtered,
+      x: "sex",
+      y: "species",
+      marginRight: 80
+    },
+    marks: [
+      Plot.frame(),
+    ]
+  }
+)
+```
+
+## Data
+
+```{ojs}
+Inputs.table(filtered)
+```
+:::
+
+```{ojs}
+// data = FileAttachment("palmer-penguins.csv").csv({ typed: true })
+data = FileAttachment("penguins.csv").csv({ typed: true })
+```
+
+```{ojs}
+filtered = data.filter(function(penguin) {
+  return bill_length_min < penguin.bill_length_mm &&
+         islands.includes(penguin.island);
+})
+```
+
+

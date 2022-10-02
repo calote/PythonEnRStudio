@@ -1,0 +1,90 @@
+---
+title: "matplotlib demo"
+format:
+  html:
+    code-fold: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE)
+```
+
+```{r}
+library(reticulate)
+```
+
+For a demonstration of a line plot on a polar axis, see @fig-polar.
+
+```{python}
+#| label: fig-polar
+#| fig-cap: "A line plot on a polar axis"
+#| message: false
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+r = np.arange(0, 2, 0.01)
+theta = 2 * np.pi * r
+fig, ax = plt.subplots(
+  subplot_kw = {'projection': 'polar'} 
+)
+ax.plot(theta, r)
+ax.set_rticks([0.5, 1, 1.5, 2])
+ax.grid(True)
+plt.show()
+```
+
+No están usando objetos compartidos en este ejemplo, pero también se podrían hacer como en el ejemplo con R Markdown.
+
+**Quarto** es muy parecido a R Markdown: [Página oficial de Quarto](https://quarto.org)
+
+## Air Quality
+
+@fig-airquality further explores the impact of temperature on ozone level.
+
+```{r}
+#| label: fig-airquality
+#| fig-cap: Temperature and ozone level.
+#| warning: false
+#| fig-width: 8
+#| fig-height: 4
+
+library(ggplot2)
+
+ggplot(airquality, aes(Temp, Ozone)) + 
+  geom_point() + 
+  geom_smooth(method = "loess"
+)
+```
+
+## Incluye otros lenguajes: observable
+
+**Seattle Precipitation by Day (2012 to 2016)**
+
+```{r}
+#| eval: false
+# https://github.com/vega/vega/blob/main/docs/data/seattle-weather.csv
+download.file(
+  url="https://raw.githubusercontent.com/vega/vega/main/docs/data/seattle-weather.csv",
+  destfile = "seattle-weather.csv")
+```
+
+
+```{ojs}
+data = FileAttachment("seattle-weather.csv")
+  .csv({typed: true})
+  
+Plot.plot({
+  width: 800, height: 500, padding: 0,
+  color: { scheme: "blues", type: "sqrt"},
+  y: { tickFormat: i => "JFMAMJJASOND"[i] },
+  marks: [
+    Plot.cell(data, Plot.group({fill: "mean"}, {
+      x: d => d.date.getUTCDate(),
+      y: d => d.date.getUTCMonth(),
+      fill: "precipitation", 
+      inset: 0.5
+    }))
+  ]
+})
+```
